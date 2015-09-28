@@ -3,6 +3,8 @@
 - Aplikácia má byť pre desktopy alebo mobilné zariadenia?
 - Aplikácia má byť online (web) alebo offline?
 - Existuje nejaká norma pre vzájomnú vzdialenosť susedných vrstevníc?
+- Akú úroveň detailu vyžadujeme od 3D modelu (implikuje náročnosť pre zobrazenie a obmedzuje zariadenia)?
+- Chceme aby mohol užívateľ meniť úroveň detailu 3D modelu?
 - Môžeme dostať ukážkové .xml a .gpx súbory?
 - Model je možné otáčať iba okolo y-osi alebo všetkých?
 - Trajektória sa do mapy zaznačuje v našej aplikácii alebo v openorienteering mapperi?

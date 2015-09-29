@@ -2,6 +2,7 @@
 
 - Aplikácia má byť pre desktopy alebo mobilné zariadenia?
 - Aplikácia má byť online (web) alebo offline?
+- Kto je náš typický end-user?
 - Existuje nejaká norma pre vzájomnú vzdialenosť susedných vrstevníc?
 - Akú úroveň detailu vyžadujeme od 3D modelu (implikuje náročnosť pre zobrazenie a obmedzuje zariadenia)?
 - Chceme aby mohol užívateľ meniť úroveň detailu 3D modelu?
@@ -16,4 +17,4 @@
 #Zodpovedané otázky:
 
 - Čo je to openorienteering mapper ?  
-**https://openorienteering.github.io/apps/mapper/**
+*https://openorienteering.github.io/apps/mapper/*

@@ -13,7 +13,7 @@
 - Kto je náš typický end-user?  
 *Učiteľ zemepisu na strednej škole*
 - Existuje nejaká norma pre vzájomnú vzdialenosť susedných vrstevníc?  
-*Medzi vrstevnicami je pre jeden model konkrétne prevýšenie medzi vrstevnicami*
+*Medzi vrstevnicami je pre jeden model konkrétne prevýšenie*
 - Akú úroveň detailu vyžadujeme od 3D modelu (implikuje náročnosť pre zobrazenie a obmedzuje zariadenia)?  
 *Variabilnú, užívateľ si môže nastaviť*
 - Môžeme dostať ukážkové .xml a .gpx súbory?  

@@ -1,0 +1,24 @@
+********************************************************
+od:	Richard Balogh <balogh@elf.stuba.sk>
+komu:	Jakub Motyl <motyl.kubo@gmail.com>
+dátum:	5. októbra 2015, 22:42
+predmet:	Re: 3D vizualizácia mapy
+odoslané z:	elf.stuba.sk
+********************************************************
+
+Dobry den,
+
+tento softver sa pouziva na kreslenie map:
+
+
+https://openorienteering.github.io/apps/mapper/
+
+V prilohe jedna mapka realna a jedna jednoduchsia.
+
+
+Este preposlem dalsie informacie od autorov programu.
+
+Richard Balogh
+
+********************************************************
+note: attachments moved to "Sample files"

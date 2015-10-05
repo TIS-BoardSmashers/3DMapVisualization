@@ -1,0 +1,57 @@
+********************************************************
+od:	Richard Balogh <balogh@elf.stuba.sk>
+komu:	Jakub Motyl <motyl.kubo@gmail.com>
+dátum:	5. októbra 2015, 22:43
+predmet:	Fwd: Re: Orienteerigng mapper 3D view
+odoslané z:	elf.stuba.sk
+********************************************************
+
+-------- Forwarded Message --------
+Subject: Re: Orienteerigng mapper 3D view
+Date: Thu, 1 Oct 2015 02:09:08 +0200
+From: Thomas Schöps <tom.schoeps@gmail.com>
+To: Richard Balogh <balogh@elf.stuba.sk>
+CC: Kai Pastor <kai.pastor@mailbox.org>
+
+Dear Richard,
+
+In general the contours (like most of the other non-point map objects)
+are represented as polygonal paths or cubic Bezier splines in 2D (in
+paper coordinates). To read them directly from Mapper's XML based file
+format, you could use any XML parser and extract all map objects which
+have (one of) the contour symbols assigned. I think that there
+unfortunately is no documentation on the map format, but it should be
+relatively easy to figure out by looking at an example map file and
+perhaps the relevant parts of Mapper's I/O code. If you explicitly save
+a map with the extension .xmap instead of .omap, it will be saved with
+more readable formatting.
+
+To find the map objects, you could look for the <objects> tag and then
+for all <object>s it contains which have the desired symbol id assigned.
+Coordinates are in 1/1000 millimeters on the map if I remember
+correctly, and you'd need to parse the flags correctly to determine
+curves. See map_coord.h in Mapper's source for the flag values and their
+meaning.
+
+There is no necessary height information assigned to contour objects.
+How do you plan to reconstruct the height field? I guess a standard
+approach would be, given the contours' heights, to derive height
+constraints from the contours on the height field values they cover and
+use a regularizer to smoothly fill in the height values in-between.
+
+Best regards,
+Thomas
+
+
+On 09/30/15 22:04, Richard Balogh wrote:
+	Dear Thomas,
+
+	I have an idea to add an 3D view possibility to the Orienteering mapper.
+	For teaching purposes I would like to take an contour information from
+	the map
+	and try to recreate the 3D view to the landscape. Please, could you help
+	me and let me know how the contours are stored in the map file?
+	Would it be difficult to extract the contours data from it?
+
+	Best regards,
+	 Richard Balogh

@@ -1,0 +1,36 @@
+********************************************************
+od:	Richard Balogh <balogh@elf.stuba.sk>
+komu:	Jakub Motyl <motyl.kubo@gmail.com>
+dátum:	5. októbra 2015, 22:43
+predmet:	Fwd: Re: Orienteerigng mapper 3D view
+odoslané z:	elf.stuba.sk
+********************************************************
+
+-------- Forwarded Message --------
+Subject: Re: Orienteerigng mapper 3D view
+Date: Thu, 1 Oct 2015 07:26:22 +0200
+From: Kai Pastor <kai.pastor@mailbox.org>
+To: Richard Balogh <balogh@elf.stuba.sk>
+CC: Thomas Schöps <tom.schoeps@gmail.com>
+
+Dear Richard,
+
+I need to add a few things to what Thomas said:
+
+- Files with the .xmap extension are not only formatted for humans, but
+they also save the coordinates in verbose XML structures. The .omap
+extension uses a much more compact text represenation for object
+coordinates which needs dedicated parsing.
+- There are <object> tags also in the symbols and undo/redo items. The
+objects in the map are at map >  parts > objects.
+- In many maps, contours are not closed, and sometimes even split in
+segments for readability.
+- An alternative, but less precise approach might be to generate new
+contours from freely available data from the Shuttle Radar Topography
+Mission (SRTM). It quite coarse (one point per 30 m), but in mountains
+it is enough to get a good 3D impression, and it is possible to automate
+the download of the data.
+
+Feel free to e-mail me when you need more support.
+
+Regards, Kai

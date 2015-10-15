@@ -1,0 +1,23 @@
+********************************************************
+od:	Richard Balogh <balogh@elf.stuba.sk>
+komu:	Jakub Motyl <motyl.kubo@gmail.com>
+dátum:	14. októbra 2015, 21:56
+predmet:	Re: 3D vizualizacia mapy
+odoslané z:	elf.stuba.sk
+********************************************************
+
+Dobry den,
+
+myslim, ze je tam vsetko o com sme sa rozpravali. Jedna vec mi este napadla dodatocne,
+ze totiz v zobrazeni nemozeme pouzit rovnaku mierku na osiach x, y aj z. Prave ta tretia
+bude "zvelicena", pretoze ak by bola 1:1 tak obraz by bol velmi splosteny. Ten pomer
+zvacsenia medzi xy a z by sa mohol dat niekde menit.
+
+Inak je to myslim OK.
+
+Pozerali ste uz na vstupne subory co som vam posielal? Je to OK, viete ich aspon otvorit
+v OOM?
+
+Dakujem,
+
+Richard Balogh

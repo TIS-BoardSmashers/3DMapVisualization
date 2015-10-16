@@ -1,0 +1,11 @@
+********************************************************
+od:	Richard Balogh <balogh@elf.stuba.sk>
+komu:	Jakub Motyl <motyl.kubo@gmail.com>
+dátum:	16. októbra 2015, 7:32
+predmet:	Re: 3D vizualizacia mapy
+odoslané z:	elf.stuba.sk
+********************************************************
+
+OK, suhlasim so specifikaciou poziadaviek.
+
+Richard Balogh

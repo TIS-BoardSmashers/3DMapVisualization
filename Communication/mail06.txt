@@ -1,0 +1,25 @@
+********************************************************
+od:	Richard Balogh <balogh@elf.stuba.sk>
+komu:	Jakub Motyl <motyl.kubo@gmail.com>
+dátum:	2. novembra 2015, 21:42
+predmet:	Re: 3D Vizualizacia mapy GUI
+odoslané z:	elf.stuba.sk
+********************************************************
+
+Dobry den,
+
+k UI mam nasledovne pripomienky:
+
+1. Nacitanie mapy mozno nebude celkom bezproblemove, niekde dole by mohlo byt stavove okno, kam by sa
+vypisovali hlasenia (napr. kolko vrstevnic z celkoveho poctu uz je spracovanyh, kolko chybnych dat a podobne)
+
+2. Okienko s trasami by mohlo obsahovat este jeden stlpcek pred samotnym nazvom, hore by bola ikonka oka,
+zaskrtavacie policko by znamenalo zobraz/nezobraz. A vymazanie by tiez namiesto napisu stacil krizik.
+
+
+3. Pozicia, rotacia a ostatne udaje sa budu len zadavat? Malo by sa to ovladat myskou, tie policka by sa
+mozno mohli same aktualizovat podla pohybov mysi, ale ak to je len feature naviac, ze by som tam vedel
+zadat konkretne udaje, tak potom OK.
+
+
+Ostatne samozrejme moze byt, dakujem.

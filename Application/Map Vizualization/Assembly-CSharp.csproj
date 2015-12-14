@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\RunTestsScript.cs" />
      <Compile Include="Assets\Scripts\Track.cs" />
      <Compile Include="Assets\Scripts\ViewController.cs" />
+     <None Include="Assets\Test files\TextFile1.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

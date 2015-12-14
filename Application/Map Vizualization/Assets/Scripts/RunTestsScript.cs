@@ -6,7 +6,7 @@ public class RunTestsScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        testMyTerrain();
+        //testMyTerrain();
 	}
     private void testMyTerrain() {
         Debug.Log("Testing MyTerrain class NOW!");

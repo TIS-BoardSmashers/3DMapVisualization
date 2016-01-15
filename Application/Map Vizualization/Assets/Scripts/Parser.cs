@@ -6,22 +6,26 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Globalization;
 
 public class Parser : MonoBehaviour {
     private string ptext;
     private XmlReader reader;
     private Dictionary<int, int> idhash;
+    public MyTerrain myTerr;
 
     public void load() {
         ptext = "<xml><start></start></xml>";
         reader = XmlReader.Create(new StringReader(ptext));
         idhash = new Dictionary<int, int>();
-    }
+        myTerr = new MyTerrain();
+}
 
-    public void load(string text) {
+public void load(string text) {
         ptext = text;
         reader = XmlReader.Create(new StringReader(ptext));
         idhash = new Dictionary<int, int>();
+        myTerr = new MyTerrain();
 
     }
 
@@ -30,7 +34,9 @@ public class Parser : MonoBehaviour {
             ptext = File.ReadAllText(path);
             reader = XmlReader.Create(new StringReader(ptext));
             idhash = new Dictionary<int, int>();
-        } catch (Exception e) {
+            myTerr = new MyTerrain();
+        }
+        catch (Exception e) {
             Debug.LogError("Nenasiel sa file " + e.Message);
         }
     }
@@ -84,20 +90,49 @@ public class Parser : MonoBehaviour {
         //parsing Contours
         reader.ReadToFollowing("parts");
         reader.ReadToDescendant("object");
-        int i = 0;
         int minX = 999999999;
         int maxX = -999999999;
         int minY = 999999999;
         int maxY = -999999999;
-        while (reader.ReadToNextSibling("object")) {
+
+        List<Vector3[]> clist = new List<Vector3[]>();
+        List<Vector3> contour = new List<Vector3>();
+
+        while (reader.ReadToFollowing("object")) {
             if (idhash.ContainsValue(Convert.ToInt32(reader.GetAttribute("symbol")))) {
                 //Fill the contour field with a contour object
-                Debug.Log("hura");
-                i++;
+
+                contour.Clear();
+                reader.ReadToFollowing("coords");
+                reader.ReadToDescendant("coord");
+                minX = Mathf.Min(minX, Convert.ToInt32(reader.GetAttribute("x")));
+                minY = Mathf.Min(minY, Convert.ToInt32(reader.GetAttribute("y")));
+                maxX = Mathf.Max(maxX, Convert.ToInt32(reader.GetAttribute("x")));
+                maxY = Mathf.Max(maxY, Convert.ToInt32(reader.GetAttribute("y")));
+
+               // Debug.Log("X:"+reader.GetAttribute("x")+" Y:" + reader.GetAttribute("y"));
+                contour.Add(new Vector3(float.Parse(reader.GetAttribute("x"), CultureInfo.InvariantCulture.NumberFormat), 
+                                        float.Parse(reader.GetAttribute("y"),CultureInfo.InvariantCulture.NumberFormat),
+                                                                                                                     0));
+
+                while (reader.ReadToNextSibling("coord"))
+                {
+                   // Debug.Log("X:" + reader.GetAttribute("x")+ " Y:"+reader.GetAttribute("y"));
+                    contour.Add(new Vector3(float.Parse(reader.GetAttribute("x"), CultureInfo.InvariantCulture.NumberFormat),
+                                            float.Parse(reader.GetAttribute("y"), CultureInfo.InvariantCulture.NumberFormat),
+                                                                                                                         0));
+                    minX = Mathf.Min(minX, Convert.ToInt32(reader.GetAttribute("x")));
+                    minY = Mathf.Min(minY, Convert.ToInt32(reader.GetAttribute("y")));
+                    maxX = Mathf.Max(maxX, Convert.ToInt32(reader.GetAttribute("x")));
+                    maxY = Mathf.Max(maxY, Convert.ToInt32(reader.GetAttribute("y")));
+                }
+                reader.ReadToNextSibling("object");
+                clist.Add(contour.ToArray());
             }
         }
 
-        Debug.Log(i);
+        myTerr.load(clist);
+
         return true;
     }
 }

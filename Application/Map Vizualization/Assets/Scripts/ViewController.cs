@@ -22,6 +22,7 @@ public class ViewController : MonoBehaviour {
         Vector3 mouseVector = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         // convert into world coordinates
         Vector3 worldMouseVector = pivotPoint.transform.TransformDirection(mouseVector);
+        worldMouseVector = new Vector3(-worldMouseVector.x, worldMouseVector.y, 0f);
         // get mouse scroll input
         float mouseWheel = Input.mouseScrollDelta.y;
 

@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public class RunTestsScript : MonoBehaviour {
-
+    public Parser p;
 	// Use this for initialization
 	void Start () {
         //testMyTerrain();
+        testParser();
 	}
     private void testMyTerrain() {
         Debug.Log("Testing MyTerrain class NOW!");
@@ -31,5 +33,18 @@ public class RunTestsScript : MonoBehaviour {
                 Debug.Log("- " + v.ToString());
         }
         Debug.Log("Testing MyTerrain class finished.");
+    }
+
+    private void testParser()
+    {
+        Debug.Log("Testing Parser...");
+        p.loadStringFromFile(Directory.GetCurrentDirectory() + "\\Assets\\Test files\\TextFile1.txt");
+        p.parseOmap();
+        Debug.Log("Munching on Parsed data...");
+        var k = p.myTerr.getApproximatedContours(2)[0];
+        foreach(Vector3 v in k)
+        {
+            Debug.Log(v);
+        }
     }
 }

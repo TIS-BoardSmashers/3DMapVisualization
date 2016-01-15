@@ -21,7 +21,7 @@ public class Parser : MonoBehaviour {
         myTerr = new MyTerrain();
 }
 
-public void load(string text) {
+    public void load(string text) {
         ptext = text;
         reader = XmlReader.Create(new StringReader(ptext));
         idhash = new Dictionary<int, int>();
@@ -45,10 +45,11 @@ public void load(string text) {
         Debug.Log("Obsah ptext je : " + ptext);
     }
 
-    public bool parseOmap() {
+    public int[] parseOmap() {
         if (reader == null) {
-            return false;
+            return null;
         }
+        int[] ret = new int[4];
 
         //ignoring the part with colors
         reader.ReadToFollowing("colors");
@@ -90,10 +91,10 @@ public void load(string text) {
         //parsing Contours
         reader.ReadToFollowing("parts");
         reader.ReadToDescendant("object");
-        int minX = 999999999;
-        int maxX = -999999999;
-        int minY = 999999999;
-        int maxY = -999999999;
+        ret[0] = 999999999;
+        ret[1] = -999999999;
+        ret[2] = 999999999;
+        ret[3] = -999999999;
 
         List<Vector3[]> clist = new List<Vector3[]>();
         List<Vector3> contour = new List<Vector3>();
@@ -105,13 +106,13 @@ public void load(string text) {
                 contour.Clear();
                 reader.ReadToFollowing("coords");
                 reader.ReadToDescendant("coord");
-                minX = Mathf.Min(minX, Convert.ToInt32(reader.GetAttribute("x")));
-                minY = Mathf.Min(minY, Convert.ToInt32(reader.GetAttribute("y")));
-                maxX = Mathf.Max(maxX, Convert.ToInt32(reader.GetAttribute("x")));
-                maxY = Mathf.Max(maxY, Convert.ToInt32(reader.GetAttribute("y")));
+                ret[0] = Mathf.Min(ret[0], Convert.ToInt32(reader.GetAttribute("x")));
+                ret[2] = Mathf.Min(ret[2], Convert.ToInt32(reader.GetAttribute("y")));
+                ret[1] = Mathf.Max(ret[1], Convert.ToInt32(reader.GetAttribute("x")));
+                ret[3] = Mathf.Max(ret[3], Convert.ToInt32(reader.GetAttribute("y")));
 
                // Debug.Log("X:"+reader.GetAttribute("x")+" Y:" + reader.GetAttribute("y"));
-                contour.Add(new Vector3(float.Parse(reader.GetAttribute("x"), CultureInfo.InvariantCulture.NumberFormat), 
+                contour.Add(new Vector3(float.Parse(reader.GetAttribute("x"), CultureInfo.InvariantCulture.NumberFormat),
                                         float.Parse(reader.GetAttribute("y"),CultureInfo.InvariantCulture.NumberFormat),
                                                                                                                      0));
 
@@ -121,10 +122,10 @@ public void load(string text) {
                     contour.Add(new Vector3(float.Parse(reader.GetAttribute("x"), CultureInfo.InvariantCulture.NumberFormat),
                                             float.Parse(reader.GetAttribute("y"), CultureInfo.InvariantCulture.NumberFormat),
                                                                                                                          0));
-                    minX = Mathf.Min(minX, Convert.ToInt32(reader.GetAttribute("x")));
-                    minY = Mathf.Min(minY, Convert.ToInt32(reader.GetAttribute("y")));
-                    maxX = Mathf.Max(maxX, Convert.ToInt32(reader.GetAttribute("x")));
-                    maxY = Mathf.Max(maxY, Convert.ToInt32(reader.GetAttribute("y")));
+                    ret[0] = Mathf.Min(ret[0], Convert.ToInt32(reader.GetAttribute("x")));
+                    ret[2] = Mathf.Min(ret[2], Convert.ToInt32(reader.GetAttribute("y")));
+                    ret[1] = Mathf.Max(ret[1], Convert.ToInt32(reader.GetAttribute("x")));
+                    ret[3] = Mathf.Max(ret[3], Convert.ToInt32(reader.GetAttribute("y")));
                 }
                 reader.ReadToNextSibling("object");
                 clist.Add(contour.ToArray());
@@ -132,7 +133,6 @@ public void load(string text) {
         }
 
         myTerr.load(clist);
-
-        return true;
+        return ret;
     }
 }

@@ -4,60 +4,94 @@ using System.Collections.Generic;
 using System;
 
 public class BuilderScript : MonoBehaviour {
-    public Vector2[] bresenham_line(Vector3 a, Vector3 b) {
+    /* Takes two points returns (x,y) and returns rasterized line between them(array of points).
+     * Uses Bresenham line rasterization algorithm.
+    */
+    public Vector2[] bresenhamLine(Vector3 a, Vector3 b) {
         List<Vector2> coords = new List<Vector2>();
-        bool steep = false;
 
-        int x0, y0, x1, y1, dx, dy, sx, sy, d;
-
+        int x0, y0, x1, y1, dx, dy;
         x0 = Convert.ToInt32(a.x); y0 = Convert.ToInt32(a.y);
         x1 = Convert.ToInt32(b.x); y1 = Convert.ToInt32(b.y);
-
         dx = Mathf.Abs(x1 - x0);
-        if (x1 - x0 > 0)
-            sx = 1;
-        else
-            sx = -1;
-
         dy = Mathf.Abs(y1 - y0);
-        if (y1 - y0 > 0)
-            sy = 1;
-        else
-            sy = -1;
 
-        if (dy > dx) {
+        bool steep = false; // iterate x, calculate y
+        if (dy > dx)  // iterate y, calculate x
             steep = true;
-            int[] s = swapInts(x0, y0);
-            y0 = s[0]; x0 = s[1];
 
-            s = swapInts(dx, dy);
-            dy = s[0]; dx = s[1];
-
-            s = swapInts(sx, sy);
-            sy = s[0]; sx = s[1];
+        int g, l, gt; float e = 0f, d;
+        if (steep) {
+          g = y0; gt = y1; l = x0;
+          d = (dy == 0 ? 0f : Mathf.Abs(Convert.ToSingle(dx) / Convert.ToSingle(dy)));
+        } else {
+          g = x0; gt = x1; l = y0;
+          d = (dx == 0 ? 0f : Mathf.Abs(Convert.ToSingle(dy) / Convert.ToSingle(dx)));
         }
 
-        d = (2 * dy) - dx;
-
-        for (uint i = 0; i < dx; i++) {
+        int j = l;
+        for (int i = g; i <= gt; i++) {
             if (steep)
-                coords.Add(new Vector2(y0, x0));
+              coords.Add(new Vector2(Convert.ToSingle(Convert.ToInt32(e)+j), Convert.ToSingle(i)));
             else
-                coords.Add(new Vector2(x0, y0));
-
-            while (d >= 0) {
-                y0 = y0 + sy;
-                d = d - (2 * dx);
-            }
-
-            x0 = x0 + sx;
-            d = d + (2 * dy);
+              coords.Add(new Vector2(Convert.ToSingle(i), Convert.ToSingle(Convert.ToInt32(e)+j)));
+            e += d;
         }
 
-        coords.Add(new Vector2(x1, y1));
         return coords.ToArray();
     }
+    /* Takes two integers and returns an array with them swapped in order.
+    */
     private int[] swapInts(int a, int b) {
         return new int[] {b, a};
     }
+    /* Takes and array of rasterized contours, total width and height of contour map and marks them
+     * into a 3 dimensional array. First two dimensions represent y and x coordinates of points and
+     * the third serves for storing multiple overlapping contours. Returns this array.
+    */
+    public int[,,] drawContours(Vector2[][] contours, int height, int width) {
+        int[,,] ret = new int[height, width, 4];  // 3 contours can overlap
+        for (int i = 0; i < contours.Length; i++) {
+            Vector2[] c = contours[i];
+            int y, x, saveTo;
+            foreach (Vector2 point in c) {
+                y = Convert.ToInt32(point.y); x = Convert.ToInt32(point.x);
+                ret[y, x, 0]++;
+                saveTo = ret[y, x, 0];
+                ret[y, x, saveTo] = i;
+            }
+        }
+        return ret;
+    }
+    /* Scans through drawn contour array horizontally and vertically, averaging the values,
+     * and marks relative height level every field according to number of contours crossed
+     * on the way.
+    */
+    // public int[][] scanline(int[][][] contours) {
+    //     int[][] ret = new int[contours.Length][contours[0].Length];
+    //
+    //     // Horizontal pass
+    //     for (uint y = 0; y < contours.Length) {
+    //         Dictionary<int,bool> seen = new Dictionary<int,bool>();
+    //         int level = 0;
+    //         for (uint x = 0; x < contours[y].Length) {
+    //             if (contours[y][x][0] > 0) {
+    //                 int contourID;
+    //                 for (uint ci = 1; ci <= contours[y][x][0]) {
+    //                     contourID = contours[y][x][ci];
+    //                     if (seen.ContainsKey(contourID)) {
+    //                         seen[contourID] ? level-- : level++;
+    //                         seen[contourID] = !seen[contourID];
+    //                     } else {
+    //                         seen.Add(contourID, true)
+    //                         level++;
+    //                     }
+    //                 }
+    //             } else
+    //                 level++;
+    //
+    //         }
+    //     }
+    //     return ret;
+    // }
 }

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -63,35 +62,54 @@ public class BuilderScript : MonoBehaviour {
         }
         return ret;
     }
-    /* Scans through drawn contour array horizontally and vertically, averaging the values,
-     * and marks relative height level every field according to number of contours crossed
-     * on the way.
+    /* Scans through drawn contour array horizontally and vertically, averaging the values, and
+     * marks relative height level for every field according to number of contours crossed on
+     * the way.
     */
-    // public int[][] scanline(int[][][] contours) {
-    //     int[][] ret = new int[contours.Length][contours[0].Length];
-    //
-    //     // Horizontal pass
-    //     for (uint y = 0; y < contours.Length) {
-    //         Dictionary<int,bool> seen = new Dictionary<int,bool>();
-    //         int level = 0;
-    //         for (uint x = 0; x < contours[y].Length) {
-    //             if (contours[y][x][0] > 0) {
-    //                 int contourID;
-    //                 for (uint ci = 1; ci <= contours[y][x][0]) {
-    //                     contourID = contours[y][x][ci];
-    //                     if (seen.ContainsKey(contourID)) {
-    //                         seen[contourID] ? level-- : level++;
-    //                         seen[contourID] = !seen[contourID];
-    //                     } else {
-    //                         seen.Add(contourID, true)
-    //                         level++;
-    //                     }
-    //                 }
-    //             } else
-    //                 level++;
-    //
-    //         }
-    //     }
-    //     return ret;
-    // }
+    public int[,] scanline(int[,,] contours) {   // TODO test
+        int[,] ret = new int[contours.GetLength(1), contours.GetLength(0)];
+        Dictionary<int,bool> seen = new Dictionary<int,bool>();
+
+        // Horizontal pass
+        for (uint y = 0; y < contours.GetLength(1); y++) {
+            int level = 0;
+            for (uint x = 0; x < contours.GetLength(0); x++) {
+                int contourID;
+                for (uint ci = 1; ci <= contours[y, x, 0]; ci++) {
+                    contourID = contours[y, x, ci];
+                    if (seen.ContainsKey(contourID)) {
+                        level += seen[contourID] ? -1 : 1;
+                        seen[contourID] = !seen[contourID];
+                    } else {
+                        seen.Add(contourID, true);
+                        level++;
+                    }
+                }
+                ret[y, x] = level;
+            }
+            seen.Clear();
+        }
+
+        // Horizontal pass
+        for (uint x = 0; x < contours.GetLength(1); x++) {
+            int level = 0;
+            for (uint y = 0; y < contours.GetLength(0); y++) {
+                int contourID;
+                for (uint ci = 1; ci <= contours[y, x, 0]; ci++) {
+                    contourID = contours[y, x, ci];
+                    if (seen.ContainsKey(contourID)) {
+                        level += seen[contourID] ? -1 : 1;
+                        seen[contourID] = !seen[contourID];
+                    } else {
+                        seen.Add(contourID, true);
+                        level++;
+                    }
+                }
+                ret[y, x] = level;
+                ret[y, x] /= 2;
+            }
+            seen.Clear();
+        }
+        return ret;
+    }
 }

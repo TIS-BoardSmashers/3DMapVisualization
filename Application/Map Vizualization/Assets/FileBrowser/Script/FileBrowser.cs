@@ -1,6 +1,5 @@
 #define thread //comment out this line if you would like to disable multi-threaded search
 using UnityEngine;
-using System.Collections;
 using System.IO;
 #if thread
 using System.Threading;
@@ -8,7 +7,7 @@ using System.Threading;
 
 
 public class FileBrowser{
-//public 
+//public
 	//Optional Parameters
 	public string name = "File Browser"; //Just a name to identify the file browser with
 	//GUI Options
@@ -25,7 +24,7 @@ public class FileBrowser{
 	//Search
 	public bool showSearch = false; //show the search bar
 	public bool searchRecursively = false; //search current folder and sub folders
-//Protected	
+//Protected
 	//GUI
 	protected Vector2 fileScroll=Vector2.zero,folderScroll=Vector2.zero,driveScroll=Vector2.zero;
 	protected Color defaultColor;
@@ -48,7 +47,7 @@ public class FileBrowser{
 	#if thread
 	protected Thread t;
 	#endif
-	
+
 	//Constructors
 	public FileBrowser(string directory,int layoutStyle,Rect guiRect){	currentDirectory = new DirectoryInfo(directory);	layout = layoutStyle;	guiSize = guiRect;	}
 	#if (UNITY_IPHONE || UNITY_ANDROID || UNITY_BLACKBERRY || UNITY_WP8)
@@ -61,17 +60,17 @@ public class FileBrowser{
 	public FileBrowser(Rect guiRect):this(){	guiSize = guiRect;	}
 	public FileBrowser(int layoutStyle):this(Directory.GetCurrentDirectory(),layoutStyle){}
 	public FileBrowser():this(Directory.GetCurrentDirectory()){}
-	
+
 	//set variables
 	public void setDirectory(string dir){	currentDirectory=new DirectoryInfo(dir);	}
 	public void setLayout(int l){	layout=l;	}
 	public void setGUIRect(Rect r){	guiSize=r;	}
-	
-	
+
+
 	//gui function to be called during OnGUI
 	public bool draw(){
 		if(getFiles){
-			getFileList(currentDirectory); 
+			getFileList(currentDirectory);
 			getFiles=false;
 		}
 		if(guiSkin){
@@ -149,7 +148,7 @@ public class FileBrowser{
 					GUILayout.EndHorizontal();
 				}
 				fileScroll = GUILayout.BeginScrollView(fileScroll);
-				
+
 				if(isSearching){
 					drawSearchMessage();
 				}else{
@@ -163,8 +162,8 @@ public class FileBrowser{
 						if((backStyle != null)?parentDir.button(backStyle):parentDir.button())
 							getFileList(parentDir.di);
 					}
-					
-					
+
+
 					foreach(DirectoryInformation di in directories){
 						if(di.button()){	getFileList(di.di);	}
 					}
@@ -182,7 +181,7 @@ public class FileBrowser{
 					}
 				}
 				GUILayout.EndScrollView();
-				
+
 				if((selectStyle == null)?GUILayout.Button("Select"):GUILayout.Button("Select",selectStyle)){	return true;	}
 				if((cancelStyle == null)?GUILayout.Button("Cancel"):GUILayout.Button("Cancel",cancelStyle)){
 					outputFile = null;
@@ -195,7 +194,7 @@ public class FileBrowser{
 		if(guiSkin){GUI.skin = oldSkin;}
 		return false;
 	}
-	
+
 	protected void drawSearchField(){
 		if(isSearching){
 			GUILayout.Label("Searching For: \""+searchBarString+"\"");
@@ -217,7 +216,7 @@ public class FileBrowser{
 			}
 		}
 	}
-	
+
 	protected void drawSearchMessage(){
 		float tt = Time.time-startSearchTime;
 		if(tt>1)
@@ -239,7 +238,7 @@ public class FileBrowser{
 		if(tt>9)
 			GUILayout.Button(".....");
 	}
-	
+
 	public void getFileList(DirectoryInfo di){
 		//set current directory
 		currentDirectory = di;
@@ -249,14 +248,14 @@ public class FileBrowser{
 		else
 			parentDir = (di.Parent==null)?new DirectoryInformation(di):new DirectoryInformation(di.Parent);
 		showDrives = di.Parent==null;
-		
+
 		//get drives
 		string[] drvs = System.IO.Directory.GetLogicalDrives();
 		drives = new DirectoryInformation[drvs.Length];
 		for(int v=0;v<drvs.Length;v++){
 			drives[v]= (driveTexture==null)?new DirectoryInformation(new DirectoryInfo(drvs[v])):new DirectoryInformation(new DirectoryInfo(drvs[v]),driveTexture);
 		}
-		
+
 		//get directories
 		DirectoryInfo[] dia = di.GetDirectories();
 		directories = new DirectoryInformation[dia.Length];
@@ -266,7 +265,7 @@ public class FileBrowser{
 			else
 				directories[d] = new DirectoryInformation(dia[d]);
 		}
-		
+
 		//get files
 		FileInfo[] fia = di.GetFiles(searchPattern);
 		//FileInfo[] fia = searchDirectory(di,searchPattern);
@@ -278,12 +277,12 @@ public class FileBrowser{
 				files[f] = new FileInformation(fia[f]);
 		}
 	}
-	
-	
+
+
 	public void searchFileList(DirectoryInfo di){
 		searchFileList(di,fileTexture!=null);
 	}
-	
+
 	protected void searchFileList(DirectoryInfo di,bool hasTexture){
 		//(searchBarString.IndexOf("*") >= 0)?searchBarString:"*"+searchBarString+"*"; //this allows for more intuitive searching for strings in file names
 		FileInfo[] fia = di.GetFiles((searchBarString.IndexOf("*") >= 0)?searchBarString:"*"+searchBarString+"*",(searchRecursively)?SearchOption.AllDirectories:SearchOption.TopDirectoryOnly);
@@ -299,12 +298,12 @@ public class FileBrowser{
 		isSearching = false;
 		#endif
 	}
-	
+
 	protected void threadSearchFileList(object hasTexture){
 		searchFileList(currentDirectory,(bool)hasTexture);
 		isSearching = false;
 	}
-	
+
 	//search a directory by a search pattern, this is optionally recursive
 	public static FileInfo[] searchDirectory(DirectoryInfo di,string sp,bool recursive){
 		return di.GetFiles(sp,(recursive)?SearchOption.AllDirectories:SearchOption.TopDirectoryOnly);
@@ -312,9 +311,9 @@ public class FileBrowser{
 	public static FileInfo[] searchDirectory(DirectoryInfo di,string sp){
 		return searchDirectory(di,sp,false);
 	}
-	
+
 	public float brightness(Color c){	return	c.r*.3f+c.g*.59f+c.b*.11f;	}
-	
+
 	//to string
 	public override string ToString(){
 		return "Name: "+name+"\nVisible: "+isVisible.ToString()+"\nDirectory: "+currentDirectory+"\nLayout: "+layout.ToString()+"\nGUI Size: "+guiSize.ToString()+"\nDirectories: "+directories.Length.ToString()+"\nFiles: "+files.Length.ToString();
@@ -324,17 +323,17 @@ public class FileBrowser{
 public class FileInformation{
 	public FileInfo fi;
 	public GUIContent gc;
-	
+
 	public FileInformation(FileInfo f){
 		fi=f;
 		gc = new GUIContent(fi.Name);
 	}
-	
+
 	public FileInformation(FileInfo f,Texture2D img){
 		fi = f;
 		gc = new GUIContent(fi.Name,img);
 	}
-	
+
 	public bool button(){return GUILayout.Button(gc);}
 	public void label(){	GUILayout.Label(gc);	}
 	public bool button(GUIStyle gs){return GUILayout.Button(gc,gs);}
@@ -344,17 +343,17 @@ public class FileInformation{
 public class DirectoryInformation{
 	public DirectoryInfo di;
 	public GUIContent gc;
-	
+
 	public DirectoryInformation(DirectoryInfo d){
 		di=d;
 		gc = new GUIContent(d.Name);
 	}
-	
+
 	public DirectoryInformation(DirectoryInfo d,Texture2D img){
 		di=d;
 		gc = new GUIContent(d.Name,img);
 	}
-	
+
 	public bool button(){return GUILayout.Button(gc);}
 	public void label(){	GUILayout.Label(gc);	}
 	public bool button(GUIStyle gs){return GUILayout.Button(gc,gs);}

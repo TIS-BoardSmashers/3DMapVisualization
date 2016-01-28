@@ -1,11 +1,10 @@
 using UnityEngine;
-using System.Collections;
 
 public class testFileBrowser : MonoBehaviour {
 	//skins and textures
 	public GUISkin[] skins;
 	public Texture2D file,folder,back,drive;
-	
+
 	string[] layoutTypes = {"Type 0","Type 1"};
 	//initialize file browser
 	FileBrowser fb = new FileBrowser();
@@ -15,7 +14,7 @@ public class testFileBrowser : MonoBehaviour {
 		//setup file browser style
 		fb.guiSkin = skins[0]; //set the starting skin
 		//set the various textures
-		fb.fileTexture = file; 
+		fb.fileTexture = file;
 		fb.directoryTexture = folder;
 		fb.backTexture = back;
 		fb.driveTexture = drive;
@@ -24,7 +23,7 @@ public class testFileBrowser : MonoBehaviour {
 		//search recursively (setting recursive search may cause a long delay)
 		fb.searchRecursively = true;
 	}
-	
+
 	void OnGUI(){
 		/*GUILayout.BeginHorizontal();
 		GUILayout.BeginVertical();

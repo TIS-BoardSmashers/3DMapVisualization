@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class ViewController : MonoBehaviour {
     // MoveSpeed, RotateSpeed and ZoomSpeed can be floats in range (0..infinity>,

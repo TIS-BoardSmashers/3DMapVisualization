@@ -55,6 +55,8 @@ public class BuilderScript : MonoBehaviour {
             int y, x, saveTo;
             foreach (Vector2 point in c) {
                 y = Convert.ToInt32(point.y); x = Convert.ToInt32(point.x);
+                if (ret[y, x, 0] == 3)
+                  Debug.LogError("drawContours overflow @" + y + " " + x);
                 ret[y, x, 0]++;
                 saveTo = ret[y, x, 0];
                 ret[y, x, saveTo] = i;
@@ -67,7 +69,7 @@ public class BuilderScript : MonoBehaviour {
      * the way.
     */
     public int[,] scanline(int[,,] contours) {   // TODO test
-        int[,] ret = new int[contours.GetLength(1), contours.GetLength(0)];
+        int[,] ret = new int[contours.GetLength(0), contours.GetLength(1)];
         Dictionary<int,bool> seen = new Dictionary<int,bool>();
 
         // Horizontal pass
@@ -91,9 +93,9 @@ public class BuilderScript : MonoBehaviour {
         }
 
         // Horizontal pass
-        for (uint x = 0; x < contours.GetLength(1); x++) {
+        for (uint x = 0; x < contours.GetLength(0); x++) {
             int level = 0;
-            for (uint y = 0; y < contours.GetLength(0); y++) {
+            for (uint y = 0; y < contours.GetLength(1); y++) {
                 int contourID;
                 for (uint ci = 1; ci <= contours[y, x, 0]; ci++) {
                     contourID = contours[y, x, ci];

@@ -13,7 +13,8 @@ public class RunTestsScript : MonoBehaviour {
           //testApproximation();
           //testParser();
           //testBresenham();
-          testDrawContours();
+          //testDrawContours();
+          testScanline();
   	}
     private void testApproximation() {
         Debug.Log("Testing Approximation class!");
@@ -113,5 +114,48 @@ public class RunTestsScript : MonoBehaviour {
         Debug.Log(equal ? "passed" : "failed");
 
         Debug.Log("Testing drawContours() finished.");
+    }
+    private void testScanline() {
+        Debug.Log("Testing scanline()");
+
+        Debug.Log("test1:");// test s 1 vrstevnicou
+        int[,] expected = new int[3,3] {
+            {0, 1, 1},
+            {0, 1, 1},
+            {0, 1, 1}
+        };
+
+        int[,,] drawn = new int[3,3,4] {
+            {{0,0,0,0}, {1,0,0,0}, {0,0,0,0}},
+            {{0,0,0,0}, {1,0,0,0}, {0,0,0,0}},
+            {{0,0,0,0}, {1,0,0,0}, {0,0,0,0}}
+        };
+        int[,] result = b.scanline(drawn);
+        var equal =
+            expected.Rank == result.Rank &&
+            Enumerable.Range(0,expected.Rank).All(dimension => expected.GetLength(dimension) == result.GetLength(dimension)) &&
+            expected.Cast<int>().SequenceEqual(result.Cast<int>());
+        Debug.Log(equal ? "passed" : "failed");
+
+        Debug.Log("test2:");// test s 2 prekrizenymi vrstevnicami
+        expected = new int[3,3] {
+            {0, 1, 1},
+            {0, 1, 1},
+            {1, 2, 2}
+        };
+
+        drawn = new int[3,3,4] {
+            {{0,0,0,0}, {1,1,0,0}, {0,0,0,0}},
+            {{0,0,0,0}, {1,1,0,0}, {0,0,0,0}},
+            {{1,0,0,0}, {2,0,1,0}, {1,0,0,0}}
+        };
+        result = b.scanline(drawn);
+        equal =
+            expected.Rank == result.Rank &&
+            Enumerable.Range(0,expected.Rank).All(dimension => expected.GetLength(dimension) == result.GetLength(dimension)) &&
+            expected.Cast<int>().SequenceEqual(result.Cast<int>());
+        Debug.Log(equal ? "passed" : "failed");
+
+        Debug.Log("Testing scanline() finished.");
     }
 }

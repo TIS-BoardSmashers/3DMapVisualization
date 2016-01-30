@@ -66,49 +66,69 @@ public class BuilderScript : MonoBehaviour {
     }
     /* Scans through drawn contour array horizontally and vertically, averaging the values, and
      * marks relative height level for every field according to number of contours crossed on
-     * the way.
+     * the way. 0 marks lowest level.
     */
     public int[,] scanline(int[,,] contours) {   // TODO test
         int[,] ret = new int[contours.GetLength(0), contours.GetLength(1)];
         Dictionary<int,bool> seen = new Dictionary<int,bool>();
+        List<int> recentContours = new List<int>(), contourBuffer = new List<int>();
 
         // Horizontal pass
-        for (uint y = 0; y < contours.GetLength(1); y++) {
+        for (uint y = 0; y < contours.GetLength(0); y++) {
             int level = 0;
-            for (uint x = 0; x < contours.GetLength(0); x++) {
+            for (uint x = 0; x < contours.GetLength(1); x++) {
                 int contourID;
                 for (uint ci = 1; ci <= contours[y, x, 0]; ci++) {
                     contourID = contours[y, x, ci];
-                    if (seen.ContainsKey(contourID)) {
-                        level += seen[contourID] ? -1 : 1;
-                        seen[contourID] = !seen[contourID];
+                    contourBuffer.Add(contourID);
+                    if (recentContours.Contains(contourID)) {
+                        continue;
                     } else {
-                        seen.Add(contourID, true);
-                        level++;
+                        if (seen.ContainsKey(contourID)) {
+                            level += seen[contourID] ? -1 : 1;
+                            seen[contourID] = !seen[contourID];
+                        } else {
+                            seen.Add(contourID, true);
+                            level++;
+                        }
                     }
                 }
+                recentContours.Clear();
+                recentContours.AddRange(contourBuffer);
+                contourBuffer.Clear();
+
                 ret[y, x] = level;
             }
             seen.Clear();
         }
 
         // Horizontal pass
-        for (uint x = 0; x < contours.GetLength(0); x++) {
+        for (uint x = 0; x < contours.GetLength(1); x++) {
             int level = 0;
-            for (uint y = 0; y < contours.GetLength(1); y++) {
+            for (uint y = 0; y < contours.GetLength(0); y++) {
                 int contourID;
                 for (uint ci = 1; ci <= contours[y, x, 0]; ci++) {
                     contourID = contours[y, x, ci];
-                    if (seen.ContainsKey(contourID)) {
-                        level += seen[contourID] ? -1 : 1;
-                        seen[contourID] = !seen[contourID];
+                    contourBuffer.Add(contourID);
+                    if (recentContours.Contains(contourID)) {
+                        continue;
                     } else {
-                        seen.Add(contourID, true);
-                        level++;
+                        if (seen.ContainsKey(contourID)) {
+                            level += seen[contourID] ? -1 : 1;
+                            seen[contourID] = !seen[contourID];
+                        } else {
+                            seen.Add(contourID, true);
+                            level++;
+                        }
                     }
                 }
-                ret[y, x] = level;
-                ret[y, x] /= 2;
+                recentContours.Clear();
+                recentContours.AddRange(contourBuffer);
+                contourBuffer.Clear();
+
+                ret[y, x] += level;
+                ret[y, x] = Convert.ToInt32(
+                    Math.Ceiling(Convert.ToSingle(ret[y, x]) / 2.0f));
             }
             seen.Clear();
         }

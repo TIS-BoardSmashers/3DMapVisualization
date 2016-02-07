@@ -68,7 +68,7 @@ public class BuilderScript : MonoBehaviour {
      * marks relative height level for every field according to number of contours crossed on
      * the way. 0 marks lowest level.
     */
-    public int[,] scanline(int[,,] contours) {   // TODO test
+    public int[,] scanline(int[,,] contours) {
         int[,] ret = new int[contours.GetLength(0), contours.GetLength(1)];
         Dictionary<int,bool> seen = new Dictionary<int,bool>();
         List<int> recentContours = new List<int>(), contourBuffer = new List<int>();

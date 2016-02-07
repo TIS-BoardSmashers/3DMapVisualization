@@ -28,10 +28,6 @@ public class MyTerrain {
                 }
             }
 
-            // remove one of duplicit first-last points if countour is cyclic
-            //if (contour[0].Equals(contour[contour.Length - 1]))
-            //    c.RemoveAt(c.Count - 1);
-
             approx.Add(c.ToArray());
             c.Clear();
         }

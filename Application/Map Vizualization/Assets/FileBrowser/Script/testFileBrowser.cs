@@ -25,29 +25,22 @@ public class testFileBrowser : MonoBehaviour {
 	}
 
 	void OnGUI(){
-		/*GUILayout.BeginHorizontal();
-		GUILayout.BeginVertical();
-		GUILayout.Label("Layout Type");
-		fb.setLayout(GUILayout.SelectionGrid(fb.layoutType,layoutTypes,1));
-		GUILayout.Space(10);
-		//select from available gui skins
-		GUILayout.Label("GUISkin");
-		foreach(GUISkin s in skins){
-			if(GUILayout.Button(s.name)){
-				fb.guiSkin = s;
-			}
-		}
-		GUILayout.Space(10);
-		fb.showSearch = GUILayout.Toggle(fb.showSearch,"Show Search Bar");
-		fb.searchRecursively = GUILayout.Toggle(fb.searchRecursively,"Search Sub Folders");
-		GUILayout.EndVertical();
-		GUILayout.Space(10);
-		GUILayout.Label("Selected File: "+output);
-		GUILayout.EndHorizontal();*/
 		//draw and display output
 		if(fb.draw()){ //true is returned when a file has been selected
 			//the output file is a member if the FileInfo class, if cancel was selected the value is null
-			output = (fb.outputFile==null)?"cancel hit":fb.outputFile.ToString();
+            string pth = "";
+
+            if (fb.outputFile == null) {
+                PlayerPrefs.SetString("path", "");
+                Application.LoadLevel("main");
+            } else {
+                pth = fb.outputFile.ToString();
+                PlayerPrefs.SetString("path", pth);
+                Debug.Log(pth.Substring(pth.Length - 3));
+                if (PlayerPrefs.GetString("type") == pth.Substring(pth.Length - 4)) {
+                    Application.LoadLevel("main");
+                }
+            }          
 		}
 	}
 }

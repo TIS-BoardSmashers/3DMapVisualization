@@ -13,7 +13,7 @@ public class RunTestsScript : MonoBehaviour {
           //testApproximation();
           //testParser();
           //testBresenham();
-          testDrawContours();
+          //testDrawContours();
   	}
     private void testApproximation() {
         Debug.Log("Testing Approximation class!");
@@ -43,8 +43,9 @@ public class RunTestsScript : MonoBehaviour {
     private void testParser()
     {
         Debug.Log("Testing Parser");
-        p.loadStringFromFile(Directory.GetCurrentDirectory() +
-          String.Format("{0,0,0,0}Assets{0,0,0,0}Test files{0,0,0,0}TextFile1.txt", Path.DirectorySeparatorChar));
+        /*p.loadStringFromFile(Directory.GetCurrentDirectory() +
+          String.Format("{0,0,0,0}Assets{0,0,0,0}Test files{0,0,0,0}TextFile1.txt", Path.DirectorySeparatorChar));*/      
+        p.loadStringFromFile(@"C:\Users\Martin\Documents\Škola\TIS\Github\Sample files\JednoduchyKopecStrasouGPX.omap");
         int[] minMaxs = p.parseOmap();
         Debug.Log("Munching on Parsed data...");
         Debug.Log("Mins & Maxs of data: " + minMaxs[0] + ", " + minMaxs[1] + ", " + minMaxs[2] + ", " + minMaxs[3]);

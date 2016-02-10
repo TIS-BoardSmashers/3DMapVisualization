@@ -27,16 +27,39 @@ public class Parser : MonoBehaviour {
     }
 
     public void loadStringFromFile(string path) {
-        try {
-            ptext = File.ReadAllText(path);
+        // dal som to prec z try aby som videl presne chybu aka nastane
+        Debug.Log(path);
+        using (StreamReader sr = File.OpenText(path)) {
+            ptext = sr.ReadToEnd();
+        }
+        //ptext = File.ReadAllText(path);
+        Debug.Log("Som za: ptext = File.ReadAllText(path);");
+        Debug.Log(ptext.Length);
+        reader = XmlReader.Create(new StringReader(ptext));
+        Debug.Log("Som za: reader = XmlReader.Create(new StringReader(ptext));");
+        idhash = new Dictionary<int, int>();
+        myTerr = new MyTerrain();
+        /*try {
+            //path = CleanFileName(path);
+            Debug.Log(path);
+            using (StreamReader sr = File.OpenText(path)) {
+                ptext = sr.ReadToEnd();
+            }
+            //ptext = File.ReadAllText(path);
+            Debug.Log("Som za: ptext = File.ReadAllText(path);");
             reader = XmlReader.Create(new StringReader(ptext));
+            Debug.Log("Som za: reader = XmlReader.Create(new StringReader(ptext));");
             idhash = new Dictionary<int, int>();
             myTerr = new MyTerrain();
         }
         catch (Exception e) {
             Debug.LogError("Nenasiel sa file " + e.Message);
-        }
+        }*/
     }
+
+    /*public string CleanFileName(string filename) {
+        return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+    }*/
 
     public void print() {
         Debug.Log("Obsah ptext je : " + ptext);

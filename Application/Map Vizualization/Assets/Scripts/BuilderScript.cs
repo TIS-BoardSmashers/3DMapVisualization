@@ -114,4 +114,55 @@ public class BuilderScript : MonoBehaviour {
         }
         return ret;
     }
+
+    int[][] sampleQuantization(int[][] vstup, int x, int y) {
+        //inicializacia
+        int[][] vystup = new int[y][];
+        for (int i = 0; i < vystup.Length; i++) {
+            vystup[i] = new int[x];
+        }
+
+        //pre pripad , ze je mensie pole nez vystup
+        if (vstup.Length < y && vstup[0].Length < x) {
+            for (int a = 0; a < vystup.Length; a++) {
+                for (int b = 0; b < vystup[0].Length; b++) {
+                    if (vstup.Length > a) {
+                        if (vstup[a].Length > b) {
+                            vystup[a][b] = vstup[a][b];
+                        } else {
+                            vystup[a][b] = 0;
+                        }
+                    } else {
+                        vystup[a][b] = 0;
+                    }
+                }
+            }
+        }
+
+        //ak mame velke pole a potrebujeme zmensit
+        int maxsize = Math.Max(vstup[0].Length, vstup.Length);
+        int interval = maxsize / Math.Max(x, y);
+        int amount = interval * interval;
+        //naplnim vsetky policka
+        for (int a = 0; a < vystup.Length; a++) {
+            for (int b = 0; b < vystup[0].Length; b++) {
+                int sum = 0;
+                for (int i = 0; i < interval; i++) {
+                    for (int j = 0; j < interval; j++) {
+                        //ak mi nestacia policka povodnych, ratam ich ako nuly
+                        if (a * interval + i < vstup.Length && b * interval + j < vstup[0].Length) {
+                            sum += vstup[a * interval + i][b * interval + j];
+                        }
+                    }
+                }
+                //ulozim priemer s nacitanych hodnot
+                float k = sum;
+                float am = amount;
+                k = k / am;
+                vystup[a][b] = (int)(Math.Round(k));
+            }
+        }
+        //vratim vyplnenu tabulku
+        return vystup;
+    }
 }

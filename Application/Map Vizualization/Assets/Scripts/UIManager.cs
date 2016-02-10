@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class UIManager : MonoBehaviour {
 
     private Parser parser;
+    private BuilderScript builder;
+    private TerrainFill terrain;
 
 	// Use this for initialization
 	void Start () {
@@ -38,15 +41,25 @@ public class UIManager : MonoBehaviour {
 
     public void LoadMap(string path) {
         parser = new Parser();
+        builder = new BuilderScript();
+        terrain = new TerrainFill();
+        
         parser.loadStringFromFile(path);
         int[] minMaxs = parser.parseOmap();
-        //Vector3[][] appContours = parser.myTerr.getApproximatedContours(5);
+        Vector3[][] appContours = parser.myTerr.getApproximatedContours(5);
 
-        /*Vector2[][] rasterized = 
+        ArrayList rasterizedAL = new ArrayList();
+        //Mathf.Abs(minMaxs[1] - minMaxs[0]), Mathf.Abs(minMaxs[3] - minMaxs[2])
+
         for (int i = 0; i < appContours.Length; i++) {
-            for (int j = 0; j < appContours[i].Length; j++) {
-
+            for (int j = 1; j < appContours[i].Length; j++) {
+                rasterizedAL.Add(builder.bresenhamLine(appContours[i][j - 1], appContours[i][j]));
             }
-        }*/
+        }
+        Vector2[][] rasterized = (Vector2[][])rasterizedAL.ToArray(typeof(Vector2[]));
+        int[,,] drawnContours = builder.drawContours(rasterized, Mathf.Abs(minMaxs[3] - minMaxs[2]), Mathf.Abs(minMaxs[1] - minMaxs[0]));
+        int[,] scanlined = builder.scanline(drawnContours);
+        int[,] res = builder.sampleQuantization(scanlined, 257, 257);
+        terrain.FillTerrain(res);
     }
 }

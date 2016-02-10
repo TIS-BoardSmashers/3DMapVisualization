@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Globalization;
+using System.Xml.Linq;
 
 public class Parser : MonoBehaviour {
     private string ptext;
@@ -28,7 +29,7 @@ public class Parser : MonoBehaviour {
 
     public void loadStringFromFile(string path) {
         // dal som to prec z try aby som videl presne chybu aka nastane
-        Debug.Log(path);
+        /*Debug.Log(path);
         using (StreamReader sr = File.OpenText(path)) {
             ptext = sr.ReadToEnd();
         }
@@ -38,14 +39,16 @@ public class Parser : MonoBehaviour {
         reader = XmlReader.Create(new StringReader(ptext));
         Debug.Log("Som za: reader = XmlReader.Create(new StringReader(ptext));");
         idhash = new Dictionary<int, int>();
-        myTerr = new MyTerrain();
-        /*try {
+        myTerr = new MyTerrain();*/
+        try {
             //path = CleanFileName(path);
             Debug.Log(path);
-            using (StreamReader sr = File.OpenText(path)) {
+            /*using (StreamReader sr = File.OpenText(path)) {
                 ptext = sr.ReadToEnd();
-            }
-            //ptext = File.ReadAllText(path);
+            }*/
+            //ptext = IndentedNewWSDLString(path);
+            ptext = File.ReadAllText(path);
+            Debug.Log(ptext);
             Debug.Log("Som za: ptext = File.ReadAllText(path);");
             reader = XmlReader.Create(new StringReader(ptext));
             Debug.Log("Som za: reader = XmlReader.Create(new StringReader(ptext));");
@@ -54,7 +57,7 @@ public class Parser : MonoBehaviour {
         }
         catch (Exception e) {
             Debug.LogError("Nenasiel sa file " + e.Message);
-        }*/
+        }
     }
 
     /*public string CleanFileName(string filename) {
@@ -63,6 +66,12 @@ public class Parser : MonoBehaviour {
 
     public void print() {
         Debug.Log("Obsah ptext je : " + ptext);
+    }
+
+    public string IndentedNewWSDLString(string filePath) {
+        var xml = File.ReadAllText(filePath);
+        XDocument doc = XDocument.Parse(xml);
+        return doc.ToString();
     }
 
     public int[] parseOmap() {

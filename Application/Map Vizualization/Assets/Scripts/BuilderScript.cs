@@ -50,6 +50,7 @@ public class BuilderScript : MonoBehaviour {
     */
     public int[][][] drawContours(Vector2[][] contours, int height, int width) {
         int[][][] ret = new int[height][][];  // 3 contours can overlap
+
         for (int i = 0; i < height; i++) {
             ret[i] = new int[width][];
             for (int j = 0; j < width; j++) {

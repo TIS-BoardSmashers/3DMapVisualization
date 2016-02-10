@@ -47,7 +47,7 @@ public class RunTestsScript : MonoBehaviour
         Debug.Log("Testing Parser");
         /*p.loadStringFromFile(Directory.GetCurrentDirectory() +
           String.Format("{0,0,0,0}Assets{0,0,0,0}Test files{0,0,0,0}TextFile1.txt", Path.DirectorySeparatorChar));*/      
-        p.loadStringFromFile(@"C:\Users\Martin\Documents\Škola\TIS\Github\Sample files\JednoduchyKopecStrasouGPX.omap");
+        //p.loadStringFromFile(@"C:\Users\Martin\Documents\Škola\TIS\Github\Sample files\JednoduchyKopecStrasouGPX.omap");
         int[] minMaxs = p.parseOmap();
         Debug.Log("Munching on Parsed data...");
         Debug.Log("Mins & Maxs of data: " + minMaxs[0] + ", " + minMaxs[1] + ", " + minMaxs[2] + ", " + minMaxs[3]);
@@ -92,7 +92,7 @@ public class RunTestsScript : MonoBehaviour
             {{0,0,0,0}, {1,0,0,0}, {0,0,0,0}},
             {{0,0,0,0}, {0,0,0,0}, {1,0,0,0}}
         };
-        int[, ,] result = b.drawContours(cs.ToArray(), 3, 3);
+        int[][][] result = b.drawContours(cs.ToArray(), 3, 3);
         var equal =
             expected.Rank == result.Rank &&
             Enumerable.Range(0, expected.Rank).All(dimension => expected.GetLength(dimension) == result.GetLength(dimension)) &&
@@ -121,18 +121,18 @@ public class RunTestsScript : MonoBehaviour
         Debug.Log("Testing scanline()");
 
         Debug.Log("test1:");// test s 1 vrstevnicou
-        int[,] expected = new int[3, 3] {
-            {0, 1, 1},
-            {0, 1, 1},
-            {0, 1, 1}
+        int[][] expected = new int[][] {
+            new int[] {0, 1, 1},
+            new int[] {0, 1, 1},
+            new int[] {0, 1, 1}
         };
 
-        int[, ,] drawn = new int[3, 3, 4] {
-            {{0,0,0,0}, {1,0,0,0}, {0,0,0,0}},
-            {{0,0,0,0}, {1,0,0,0}, {0,0,0,0}},
-            {{0,0,0,0}, {1,0,0,0}, {0,0,0,0}}
+        int[][][] drawn = new int[][][] {
+            new int[][] {new int[] {0,0,0,0}, new int[] {1,0,0,0}, new int[] {0,0,0,0}},
+            new int[][] {new int[] {0,0,0,0}, new int[] {1,0,0,0}, new int[] {0,0,0,0}},
+            new int[][] {new int[] {0,0,0,0}, new int[] {1,0,0,0}, new int[] {0,0,0,0}}
         };
-        int[,] result = b.scanline(drawn);
+        int[][] result = b.scanline(drawn);
         var equal =
             expected.Rank == result.Rank &&
             Enumerable.Range(0, expected.Rank).All(dimension => expected.GetLength(dimension) == result.GetLength(dimension)) &&
@@ -140,16 +140,16 @@ public class RunTestsScript : MonoBehaviour
         Debug.Log(equal ? "passed" : "failed");
 
         Debug.Log("test2:");// test s 2 prekrizenymi vrstevnicami
-        expected = new int[3, 3] {
-            {0, 1, 1},
-            {0, 1, 1},
-            {1, 2, 2}
+        expected = new int[][] {
+            new int[] {0, 1, 1},
+            new int[] {0, 1, 1},
+            new int[] {1, 2, 2}
         };
 
-        drawn = new int[3, 3, 4] {
-            {{0,0,0,0}, {1,1,0,0}, {0,0,0,0}},
-            {{0,0,0,0}, {1,1,0,0}, {0,0,0,0}},
-            {{1,0,0,0}, {2,0,1,0}, {1,0,0,0}}
+        drawn = new int[][][] {
+            new int[][] {new int[] {0,0,0,0}, new int[] {1,1,0,0}, new int[] {0,0,0,0}},
+            new int[][] {new int[] {0,0,0,0}, new int[] {1,1,0,0}, new int[] {0,0,0,0}},
+            new int[][] {new int[] {1,0,0,0}, new int[] {2,0,1,0}, new int[] {1,0,0,0}}
         };
         result = b.scanline(drawn);
         equal =

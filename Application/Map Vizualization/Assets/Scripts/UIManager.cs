@@ -57,9 +57,9 @@ public class UIManager : MonoBehaviour {
             }
         }
         Vector2[][] rasterized = (Vector2[][])rasterizedAL.ToArray(typeof(Vector2[]));
-        int[,,] drawnContours = builder.drawContours(rasterized, Mathf.Abs(minMaxs[3] - minMaxs[2]), Mathf.Abs(minMaxs[1] - minMaxs[0]));
-        int[,] scanlined = builder.scanline(drawnContours);
-        int[,] res = builder.sampleQuantization(scanlined, 257, 257);
+        int[][][] drawnContours = builder.drawContours(rasterized, Mathf.Abs(minMaxs[3] - minMaxs[2]), Mathf.Abs(minMaxs[1] - minMaxs[0]));
+        int[][] scanlined = builder.scanline(drawnContours);
+        int[][] res = builder.sampleQuantization(scanlined, 257, 257);
         terrain.FillTerrain(res);
     }
 }

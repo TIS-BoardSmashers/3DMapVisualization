@@ -27,13 +27,13 @@ public class TerrainFill : MonoBehaviour
 
     }
 
-    public void FillTerrain(int[,] input) {
+    public void FillTerrain(int[][] input) {
         int res = tData.heightmapResolution;
         heights = new float[res, res];
 
         for (int i = 0; i < res; i++) {
             for (int j = 0; j < res; j++) {
-                heights[i, j] = input[i,j]/1000;
+                heights[i, j] = input[i][j]/1000;
             }
         }
         tData.SetHeightsDelayLOD(xBase, yBase, heights);

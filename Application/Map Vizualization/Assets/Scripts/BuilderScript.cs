@@ -48,18 +48,25 @@ public class BuilderScript : MonoBehaviour {
      * into a 3 dimensional array. First two dimensions represent y and x coordinates of points and
      * the third serves for storing multiple overlapping contours. Returns this array.
     */
-    public int[,,] drawContours(Vector2[][] contours, int height, int width) {
-        int[,,] ret = new int[height, width, 4];  // 3 contours can overlap
+    public int[][][] drawContours(Vector2[][] contours, int height, int width) {
+        int[][][] ret = new int[height][][];  // 3 contours can overlap
+        for (int i = 0; i < height; i++) {
+            ret[i] = new int[width][];
+            for (int j = 0; j < width; j++) {
+                ret[i][j] = new int[4];
+            }
+        }
+
         for (int i = 0; i < contours.Length; i++) {
             Vector2[] c = contours[i];
             int y, x, saveTo;
             foreach (Vector2 point in c) {
                 y = Convert.ToInt32(point.y); x = Convert.ToInt32(point.x);
-                if (ret[y, x, 0] == 3)
+                if (ret[y][x][0] == 3)
                   Debug.LogError("drawContours overflow @" + y + " " + x);
-                ret[y, x, 0]++;
-                saveTo = ret[y, x, 0];
-                ret[y, x, saveTo] = i;
+                ret[y][x][0]++;
+                saveTo = ret[y][x][0];
+                ret[y][x][saveTo] = i;
             }
         }
         return ret;
@@ -68,8 +75,13 @@ public class BuilderScript : MonoBehaviour {
      * marks relative height level for every field according to number of contours crossed on
      * the way. 0 marks lowest level.
     */
-    public int[,] scanline(int[,,] contours) {
-        int[,] ret = new int[contours.GetLength(0), contours.GetLength(1)];
+    public int[][] scanline(int[][][] contours) {
+        int[][] ret = new int[contours.GetLength(0)][];
+
+        for (int i = 0; i < contours.GetLength(0); i++) {
+            ret[i] = new int[contours.GetLength(1)];
+        }
+
         Dictionary<int,bool> seen = new Dictionary<int,bool>();
         List<int> recentContours = new List<int>(), contourBuffer = new List<int>();
 
@@ -78,8 +90,8 @@ public class BuilderScript : MonoBehaviour {
             int level = 0;
             for (uint x = 0; x < contours.GetLength(1); x++) {
                 int contourID;
-                for (uint ci = 1; ci <= contours[y, x, 0]; ci++) {
-                    contourID = contours[y, x, ci];
+                for (uint ci = 1; ci <= contours[y][x][0]; ci++) {
+                    contourID = contours[y][x][ci];
                     contourBuffer.Add(contourID);
                     if (recentContours.Contains(contourID)) {
                         continue;
@@ -97,7 +109,7 @@ public class BuilderScript : MonoBehaviour {
                 recentContours.AddRange(contourBuffer);
                 contourBuffer.Clear();
 
-                ret[y, x] = level;
+                ret[y][x] = level;
             }
             seen.Clear();
         }
@@ -107,8 +119,8 @@ public class BuilderScript : MonoBehaviour {
             int level = 0;
             for (uint y = 0; y < contours.GetLength(0); y++) {
                 int contourID;
-                for (uint ci = 1; ci <= contours[y, x, 0]; ci++) {
-                    contourID = contours[y, x, ci];
+                for (uint ci = 1; ci <= contours[y][x][0]; ci++) {
+                    contourID = contours[y][x][ci];
                     contourBuffer.Add(contourID);
                     if (recentContours.Contains(contourID)) {
                         continue;
@@ -126,19 +138,21 @@ public class BuilderScript : MonoBehaviour {
                 recentContours.AddRange(contourBuffer);
                 contourBuffer.Clear();
 
-                ret[y, x] += level;
-                ret[y, x] = Convert.ToInt32(
-                    Math.Ceiling(Convert.ToSingle(ret[y, x]) / 2.0f));
+                ret[y][x] += level;
+                ret[y][x] = Convert.ToInt32(
+                    Math.Ceiling(Convert.ToSingle(ret[y][x]) / 2.0f));
             }
             seen.Clear();
         }
         return ret;
     }
 
-    public int[,] sampleQuantization(int[,] vstup, int x, int y) {
+    public int[][] sampleQuantization(int[][] vstup, int x, int y) {
         //inicializacia
-        int[,] vystup = new int[y,x];
-        
+        int[][] vystup = new int[y][];
+        for (int i = 0; i < y; i++) {
+            vystup[i] = new int[x];
+        }
 
         //pre pripad , ze je mensie pole nez vystup
         if (vstup.GetLength(0) < y && vstup.GetLength(1) < x) {
@@ -146,12 +160,12 @@ public class BuilderScript : MonoBehaviour {
                 for (int b = 0; b < x; b++) {
                     if (vstup.Length > a) {
                         if (vstup.GetLength(1) > b) {
-                            vystup[a,b] = vstup[a,b];
+                            vystup[a][b] = vstup[a][b];
                         } else {
-                            vystup[a,b] = 0;
+                            vystup[a][b] = 0;
                         }
                     } else {
-                        vystup[a,b] = 0;
+                        vystup[a][b] = 0;
                     }
                 }
             }
@@ -169,7 +183,7 @@ public class BuilderScript : MonoBehaviour {
                     for (int j = 0; j < interval; j++) {
                         //ak mi nestacia policka povodnych, ratam ich ako nuly
                         if (a * interval + i < vstup.GetLength(0) && b * interval + j < vstup.GetLength(1)) {
-                            sum += vstup[a * interval + i, b * interval + j];
+                            sum += vstup[a * interval + i][b * interval + j];
                         }
                     }
                 }
@@ -177,7 +191,7 @@ public class BuilderScript : MonoBehaviour {
                 float k = sum;
                 float am = amount;
                 k = k / am;
-                vystup[a,b] = (int)(Math.Round(k));
+                vystup[a][b] = (int)(Math.Round(k));
             }
         }
         //vratim vyplnenu tabulku

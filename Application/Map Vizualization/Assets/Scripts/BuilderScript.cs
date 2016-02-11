@@ -54,17 +54,23 @@ public class BuilderScript : MonoBehaviour {
         for (int i = 0; i < height; i++) {
             ret[i] = new int[width][];
             for (int j = 0; j < width; j++) {
-                ret[i][j] = new int[4];
+                ret[i][j] = new int[100];
             }
         }
+        Debug.Log(ret.Length + " " + ret[0].Length + " " + ret[0][0].Length);
 
         for (int i = 0; i < contours.Length; i++) {
             Vector2[] c = contours[i];
             int y, x, saveTo;
             foreach (Vector2 point in c) {
                 y = Convert.ToInt32(point.y); x = Convert.ToInt32(point.x);
-                if (ret[y][x][0] == 3)
-                  Debug.LogError("drawContours overflow @" + y + " " + x);
+                try {
+                    if (ret[y][x][0] == 99)
+                        Debug.LogError("drawContours overflow @" + y + " " + x);
+                } catch (IndexOutOfRangeException e) {
+                    Debug.LogError("drawContours index error.. y: " + y + " x: " + x + " height: " + height + " width: " + width + " ... " + e);
+                }
+                
                 ret[y][x][0]++;
                 saveTo = ret[y][x][0];
                 ret[y][x][saveTo] = i;
@@ -77,19 +83,19 @@ public class BuilderScript : MonoBehaviour {
      * the way. 0 marks lowest level.
     */
     public int[][] scanline(int[][][] contours) {
-        int[][] ret = new int[contours.GetLength(0)][];
+        int[][] ret = new int[contours.Length][];
 
-        for (int i = 0; i < contours.GetLength(0); i++) {
-            ret[i] = new int[contours.GetLength(1)];
+        for (int i = 0; i < contours.Length; i++) {
+            ret[i] = new int[contours[0].Length];
         }
 
         Dictionary<int,bool> seen = new Dictionary<int,bool>();
         List<int> recentContours = new List<int>(), contourBuffer = new List<int>();
 
         // Horizontal pass
-        for (uint y = 0; y < contours.GetLength(0); y++) {
+        for (uint y = 0; y < contours.Length; y++) {
             int level = 0;
-            for (uint x = 0; x < contours.GetLength(1); x++) {
+            for (uint x = 0; x < contours[0].Length; x++) {
                 int contourID;
                 for (uint ci = 1; ci <= contours[y][x][0]; ci++) {
                     contourID = contours[y][x][ci];
@@ -116,9 +122,9 @@ public class BuilderScript : MonoBehaviour {
         }
 
         // Horizontal pass
-        for (uint x = 0; x < contours.GetLength(1); x++) {
+        for (uint x = 0; x < contours[0].Length; x++) {
             int level = 0;
-            for (uint y = 0; y < contours.GetLength(0); y++) {
+            for (uint y = 0; y < contours.Length; y++) {
                 int contourID;
                 for (uint ci = 1; ci <= contours[y][x][0]; ci++) {
                     contourID = contours[y][x][ci];
@@ -148,19 +154,19 @@ public class BuilderScript : MonoBehaviour {
         return ret;
     }
 
-    public int[][] sampleQuantization(int[][] vstup, int x, int y) {
+    public float[][] sampleQuantization(int[][] vstup, int x, int y) {
         //inicializacia
-        int[][] vystup = new int[y][];
+        float[][] vystup = new float[y][];
         for (int i = 0; i < y; i++) {
-            vystup[i] = new int[x];
+            vystup[i] = new float[x];
         }
 
         //pre pripad , ze je mensie pole nez vystup
-        if (vstup.GetLength(0) < y && vstup.GetLength(1) < x) {
+        if (vstup.Length < y && vstup[0].Length < x) {
             for (int a = 0; a < vystup.Length; a++) {
                 for (int b = 0; b < x; b++) {
                     if (vstup.Length > a) {
-                        if (vstup.GetLength(1) > b) {
+                        if (vstup[0].Length > b) {
                             vystup[a][b] = vstup[a][b];
                         } else {
                             vystup[a][b] = 0;
@@ -173,7 +179,7 @@ public class BuilderScript : MonoBehaviour {
         }
 
         //ak mame velke pole a potrebujeme zmensit
-        int maxsize = Math.Max(vstup.GetLength(1), vstup.GetLength(0));
+        int maxsize = Math.Max(vstup[0].Length, vstup.Length);
         int interval = maxsize / Math.Max(x, y);
         int amount = interval * interval;
         //naplnim vsetky policka
@@ -183,7 +189,7 @@ public class BuilderScript : MonoBehaviour {
                 for (int i = 0; i < interval; i++) {
                     for (int j = 0; j < interval; j++) {
                         //ak mi nestacia policka povodnych, ratam ich ako nuly
-                        if (a * interval + i < vstup.GetLength(0) && b * interval + j < vstup.GetLength(1)) {
+                        if (a * interval + i < vstup.Length && b * interval + j < vstup[0].Length) {
                             sum += vstup[a * interval + i][b * interval + j];
                         }
                     }
@@ -192,7 +198,7 @@ public class BuilderScript : MonoBehaviour {
                 float k = sum;
                 float am = amount;
                 k = k / am;
-                vystup[a][b] = (int)(Math.Round(k));
+                vystup[a][b] = k;
             }
         }
         //vratim vyplnenu tabulku

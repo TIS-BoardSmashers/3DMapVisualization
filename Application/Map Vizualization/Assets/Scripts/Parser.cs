@@ -48,10 +48,10 @@ public class Parser : MonoBehaviour {
             }*/
             //ptext = IndentedNewWSDLString(path);
             ptext = File.ReadAllText(path);
-            Debug.Log(ptext);
-            Debug.Log("Som za: ptext = File.ReadAllText(path);");
+            //Debug.Log(ptext);
+            //Debug.Log("Som za: ptext = File.ReadAllText(path);");
             reader = XmlReader.Create(new StringReader(ptext));
-            Debug.Log("Som za: reader = XmlReader.Create(new StringReader(ptext));");
+            //Debug.Log("Som za: reader = XmlReader.Create(new StringReader(ptext));");
             idhash = new Dictionary<int, int>();
             myTerr = new MyTerrain();
         }

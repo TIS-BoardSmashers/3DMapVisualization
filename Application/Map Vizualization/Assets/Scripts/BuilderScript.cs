@@ -57,20 +57,17 @@ public class BuilderScript : MonoBehaviour {
                 ret[i][j] = new int[100];
             }
         }
-        Debug.Log(ret.Length + " " + ret[0].Length + " " + ret[0][0].Length);
 
         for (int i = 0; i < contours.Length; i++) {
             Vector2[] c = contours[i];
             int y, x, saveTo;
             foreach (Vector2 point in c) {
-                y = Convert.ToInt32(point.y); x = Convert.ToInt32(point.x);
-                try {
-                    if (ret[y][x][0] == 99)
-                        Debug.LogError("drawContours overflow @" + y + " " + x);
-                } catch (IndexOutOfRangeException e) {
-                    Debug.LogError("drawContours index error.. y: " + y + " x: " + x + " height: " + height + " width: " + width + " ... " + e);
-                }
+                y = Convert.ToInt32(point.y); 
+                x = Convert.ToInt32(point.x);
                 
+                if (ret[y][x][0] == 3)
+                    Debug.LogError("drawContours overflow @" + y + " " + x);
+
                 ret[y][x][0]++;
                 saveTo = ret[y][x][0];
                 ret[y][x][saveTo] = i;

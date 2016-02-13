@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: a2de9dca23b581d4aacb3cab0e4456f8
+labels:
+- File
+- Browser
+- Easy
+- Android
+- Standalone
+- Mac
+- OS
+- Linux
+- Windows
+- Icon
+- Info
+- Select
+- Search
+- Mode
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

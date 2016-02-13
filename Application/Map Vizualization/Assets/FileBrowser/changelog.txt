@@ -1,0 +1,25 @@
+0.1.5
+- Bug fixes
+
+0.1.4 (Apr 01, 2015)
+- Fixed issue with Mac OS incompatibility
+
+0.1.3 (Oct 14, 2014)
+- Fixed bug that caused to hide all files when not using any file filters
+- Added a Create Folder feature
+- Added new event type
+- Added new features to custom inspector
+
+0.1.2 (Oct 09, 2014)
+- Added multiple extension search functionality.
+
+0.1.1 (Sep 09, 2014)
+- Added support for Android
+- Lowered minimum Unity version to 4.3.0
+- Added filter functionality
+- Added icon functionality
+- Fixes to custom inspector
+- Added more customization
+
+
+0.1 Initial version (Aug 26, 2014)

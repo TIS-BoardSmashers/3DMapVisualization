@@ -8,14 +8,17 @@ public class RunTestsScript : MonoBehaviour
 {
     public Parser p;
     public BuilderScript b;
-    // Use this for initialization
-    // some tests may need to have readjusted protection levels for methods in order to run
+    
     void Start() {
+        /* Use this for initialization
+         * some tests may need to have readjusted protection levels for methods in order to run
+         */
         //testApproximation();
         //testParser();
         //testBresenham();
         //testDrawContours();
         //testScanline();
+        //testParserFunctions();
     }
     private void testApproximation() {
         Debug.Log("Testing Approximation class!");
@@ -45,10 +48,9 @@ public class RunTestsScript : MonoBehaviour
     private void testParser()
     {
         Debug.Log("Testing Parser");
-        /*p.loadStringFromFile(Directory.GetCurrentDirectory() +
-          String.Format("{0,0,0,0}Assets{0,0,0,0}Test files{0,0,0,0}TextFile1.txt", Path.DirectorySeparatorChar));*/      
-        //p.loadStringFromFile(@"C:\Users\Martin\Documents\Škola\TIS\Github\Sample files\JednoduchyKopecStrasouGPX.omap");
-        int[] minMaxs = p.parseOmap();
+        p.loadStringFromFile(Directory.GetCurrentDirectory() +
+          String.Format("{0,0,0,0}Assets{0,0,0,0}Test files{0,0,0,0}TextFile1.txt", Path.DirectorySeparatorChar));      
+        int[] minMaxs = p.myParseOmap();
         Debug.Log("Munching on Parsed data...");
         Debug.Log("Mins & Maxs of data: " + minMaxs[0] + ", " + minMaxs[1] + ", " + minMaxs[2] + ", " + minMaxs[3]);
         var k = p.myTerr.getApproximatedContours(2)[0];
@@ -57,6 +59,29 @@ public class RunTestsScript : MonoBehaviour
             Debug.Log(v);
         }
         Debug.Log("Testing Parser finished.");
+    }
+
+    private void testParserFunctions() {
+        Debug.Log("Testing Parser methods");
+        p.ptext = "0123456";
+        int ix = p.findFrom("345", 0);
+        Debug.Log("0123456 p.findFrom(345, 0) :" + ix.ToString());
+
+        ix = p.findFrom("35", 0);
+        Debug.Log("0123456 p.findFrom(35, 0) :" + ix.ToString());
+
+        ix = p.findFrom("01", 0);
+        Debug.Log("0123456 p.findFrom(01, 0) :" + ix.ToString());
+
+        p.ptext = "default part\">\n\t<objects count=\"37\">";
+        ix = p.findFrom("<objects ", 12);
+        Debug.Log("default part\">\n\t<objects count=\"37\">  p.findFrom(\"<objects \", 12); :" + ix.ToString());
+
+        p.ptext = "=\"-10";
+        int res = p.readInt(2);
+        Debug.Log("=\"-10 p.readInt(2) :" + res.ToString());
+
+        Debug.Log("Testing Parser methods finished");
     }
 
     private void testBresenham() {
@@ -120,7 +145,7 @@ public class RunTestsScript : MonoBehaviour
     private void testScanline() {
         Debug.Log("Testing scanline()");
 
-        Debug.Log("test1:");// test s 1 vrstevnicou
+        Debug.Log("test1:"); // test s 1 vrstevnicou
         int[][] expected = new int[][] {
             new int[] {0, 1, 1},
             new int[] {0, 1, 1},

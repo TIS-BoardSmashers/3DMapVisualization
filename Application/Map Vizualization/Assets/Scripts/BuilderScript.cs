@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System;
 
 public class BuilderScript : MonoBehaviour {
-    /* Takes two points returns (x,y) and returns rasterized line between them(array of points).
-     * Uses Bresenham line rasterization algorithm.
-    */
+    
     public Vector2[] bresenhamLine(Vector3 a, Vector3 b) {
+        /* Takes two points returns (x,y) and returns rasterized line between them(array of points).
+        * Uses Bresenham line rasterization algorithm.
+        */
         List<Vector2> coords = new List<Vector2>();
 
         int x0, y0, x1, y1, dx, dy;
@@ -39,16 +40,18 @@ public class BuilderScript : MonoBehaviour {
 
         return coords.ToArray();
     }
-    /* Takes two integers and returns an array with them swapped in order.
-    */
+    
     private int[] swapInts(int a, int b) {
+        /* Takes two integers and returns an array with them swapped in order.
+        */
         return new int[] {b, a};
     }
-    /* Takes and array of rasterized contours, total width and height of contour map and marks them
-     * into a 3 dimensional array. First two dimensions represent y and x coordinates of points and
-     * the third serves for storing multiple overlapping contours. Returns this array.
-    */
+    
     public int[][][] drawContours(Vector2[][] contours, int height, int width) {
+        /* Takes and array of rasterized contours, total width and height of contour map and marks them
+         * into a 3 dimensional array. First two dimensions represent y and x coordinates of points and
+         * the third serves for storing multiple overlapping contours. Returns this array.
+        */
         int[][][] ret = new int[height][][];  // 3 contours can overlap
 
         for (int i = 0; i < height; i++) {
@@ -64,9 +67,13 @@ public class BuilderScript : MonoBehaviour {
             foreach (Vector2 point in c) {
                 y = Convert.ToInt32(point.y); 
                 x = Convert.ToInt32(point.x);
-                
-                if (ret[y][x][0] == 3)
-                    Debug.LogError("drawContours overflow @" + y + " " + x);
+
+                try {
+                    if (ret[y][x][0] == 3)
+                        Debug.Log("drawContours overflow @" + y + " " + x);
+                } catch (IndexOutOfRangeException e) {
+                    Debug.Log("x: " + x.ToString() + " y: " + y.ToString() + " ... " + e);
+                }
 
                 ret[y][x][0]++;
                 saveTo = ret[y][x][0];
@@ -75,11 +82,12 @@ public class BuilderScript : MonoBehaviour {
         }
         return ret;
     }
-    /* Scans through drawn contour array horizontally and vertically, averaging the values, and
-     * marks relative height level for every field according to number of contours crossed on
-     * the way. 0 marks lowest level.
-    */
+    
     public int[][] scanline(int[][][] contours) {
+        /* Scans through drawn contour array horizontally and vertically, averaging the values, and
+         * marks relative height level for every field according to number of contours crossed on
+         * the way. 0 marks lowest level.
+        */
         int[][] ret = new int[contours.Length][];
 
         for (int i = 0; i < contours.Length; i++) {
@@ -89,8 +97,8 @@ public class BuilderScript : MonoBehaviour {
         Dictionary<int,bool> seen = new Dictionary<int,bool>();
         List<int> recentContours = new List<int>(), contourBuffer = new List<int>();
 
-        // Horizontal pass
-        for (uint y = 0; y < contours.Length; y++) {
+
+        for (uint y = 0; y < contours.Length; y++) { // Horizontal pass
             int level = 0;
             for (uint x = 0; x < contours[0].Length; x++) {
                 int contourID;
@@ -118,8 +126,8 @@ public class BuilderScript : MonoBehaviour {
             seen.Clear();
         }
 
-        // Horizontal pass
-        for (uint x = 0; x < contours[0].Length; x++) {
+
+        for (uint x = 0; x < contours[0].Length; x++) { // Horizontal pass
             int level = 0;
             for (uint y = 0; y < contours.Length; y++) {
                 int contourID;
@@ -158,8 +166,8 @@ public class BuilderScript : MonoBehaviour {
             vystup[i] = new float[x];
         }
 
-        //pre pripad , ze je mensie pole nez vystup
-        if (vstup.Length < y && vstup[0].Length < x) {
+
+        if (vstup.Length < y && vstup[0].Length < x) { //pre pripad , ze je mensie pole nez vystup
             for (int a = 0; a < vystup.Length; a++) {
                 for (int b = 0; b < x; b++) {
                     if (vstup.Length > a) {
@@ -175,30 +183,30 @@ public class BuilderScript : MonoBehaviour {
             }
         }
 
-        //ak mame velke pole a potrebujeme zmensit
-        int maxsize = Math.Max(vstup[0].Length, vstup.Length);
+
+        int maxsize = Math.Max(vstup[0].Length, vstup.Length); //ak mame velke pole a potrebujeme zmensit
         int interval = maxsize / Math.Max(x, y);
         int amount = interval * interval;
-        //naplnim vsetky policka
-        for (int a = 0; a < y; a++) {
+
+        for (int a = 0; a < y; a++) { //naplnim vsetky policka
             for (int b = 0; b < x; b++) {
                 int sum = 0;
                 for (int i = 0; i < interval; i++) {
                     for (int j = 0; j < interval; j++) {
-                        //ak mi nestacia policka povodnych, ratam ich ako nuly
-                        if (a * interval + i < vstup.Length && b * interval + j < vstup[0].Length) {
+
+                        if (a * interval + i < vstup.Length && b * interval + j < vstup[0].Length) { //ak mi nestacia policka povodnych, ratam ich ako nuly
                             sum += vstup[a * interval + i][b * interval + j];
                         }
                     }
                 }
-                //ulozim priemer s nacitanych hodnot
+                
                 float k = sum;
                 float am = amount;
-                k = k / am;
+                k = k / am; //ulozim priemer s nacitanych hodnot
                 vystup[a][b] = k;
             }
         }
-        //vratim vyplnenu tabulku
-        return vystup;
+
+        return vystup; //vratim vyplnenu tabulku
     }
 }

@@ -30,16 +30,12 @@ public class Parser : MonoBehaviour {
     public void loadStringFromFile(string path) {
         try {
             ptext = File.ReadAllText(path);
-            //reader = XmlReader.Create(new StringReader(ptext));
-            //idhash = new Dictionary<int, int>();
             myTerr = new MyTerrain();
         }
         catch (Exception e) {
             Debug.LogError("Nenasiel sa file " + e.Message);
         }
     }
-
-
 
     public void print() {
         Debug.Log("Obsah ptext je : " + ptext);
@@ -51,111 +47,16 @@ public class Parser : MonoBehaviour {
         return doc.ToString();
     }
 
-/*    public int[] parseOmap() {
-        if (reader == null) {
-            return null;
-        }
-        int[] ret = new int[4];
-
-
-        reader.ReadToFollowing("colors"); //ignoring the part with colors
-        reader.Skip();
-
-
-        reader.ReadToFollowing("symbols"); //finding relevant symbol codes and ids
-        reader.ReadToFollowing("symbol");
-        string spracuj = reader.GetAttribute("code");
-        reader.ReadToNextSibling("symbol");
-        string spracuj2 = reader.GetAttribute("code");
-
-
-        while (true) { //need to find elements used as dictionary
-            reader.ReadToNextSibling("symbol");
-            if (reader.AttributeCount >= 4) {
-                if (reader.GetAttribute(3) == "OpenOrienteering Logo") {
-                    reader.ReadToNextSibling("symbol");
-                    try {
-                        var nieco = reader.GetAttribute("code").Split('.');
-                        if (Convert.ToInt32(nieco[0]) == Convert.ToInt32(spracuj)) {
-                            idhash.Add(Convert.ToInt32(spracuj), Convert.ToInt32(reader.GetAttribute("id")));
-                        }
-                    } catch (NullReferenceException e) {
-                        Debug.Log(e);
-                    }
-
-                    break;
-                }
-            }
-
-        }
-        reader.ReadToNextSibling("symbol");
-        try {
-            var r = reader.GetAttribute("code").Split('.');
-            if (Convert.ToInt32(r[0]) == Convert.ToInt32(spracuj2)) {
-                idhash.Add(Convert.ToInt32(spracuj2), Convert.ToInt32(reader.GetAttribute("id")));
-            }
-        } catch (NullReferenceException e) {
-            Debug.Log(e);
-        }
-        
-
-
-        reader.ReadToFollowing("parts"); //parsing Contours
-        reader.ReadToDescendant("object");
-        ret[0] = 999999999;
-        ret[1] = -999999999;
-        ret[2] = 999999999;
-        ret[3] = -999999999;
-
-        List<Vector3[]> clist = new List<Vector3[]>();
-        List<Vector3> contour = new List<Vector3>();
-
-        while (reader.ReadToFollowing("object")) {
-            if (idhash.ContainsValue(Convert.ToInt32(reader.GetAttribute("symbol")))) { 
-                //Fill the contour field with a contour object
-                
-
-                contour.Clear();
-                reader.ReadToFollowing("coords");
-                reader.ReadToDescendant("coord");
-                ret[0] = Mathf.Min(ret[0], Convert.ToInt32(reader.GetAttribute("x")));
-                ret[2] = Mathf.Min(ret[2], Convert.ToInt32(reader.GetAttribute("y")));
-                ret[1] = Mathf.Max(ret[1], Convert.ToInt32(reader.GetAttribute("x")));
-                ret[3] = Mathf.Max(ret[3], Convert.ToInt32(reader.GetAttribute("y")));
-
-                contour.Add(new Vector3(float.Parse(reader.GetAttribute("x"), CultureInfo.InvariantCulture.NumberFormat),
-                                        float.Parse(reader.GetAttribute("y"),CultureInfo.InvariantCulture.NumberFormat),
-                                                                                                                     0));
-
-                while (reader.ReadToNextSibling("coord"))
-                {
-                    contour.Add(new Vector3(float.Parse(reader.GetAttribute("x"), CultureInfo.InvariantCulture.NumberFormat),
-                                            float.Parse(reader.GetAttribute("y"), CultureInfo.InvariantCulture.NumberFormat),
-                                                                                                                         0));
-                    ret[0] = Mathf.Min(ret[0], Convert.ToInt32(reader.GetAttribute("x")));
-                    ret[2] = Mathf.Min(ret[2], Convert.ToInt32(reader.GetAttribute("y")));
-                    ret[1] = Mathf.Max(ret[1], Convert.ToInt32(reader.GetAttribute("x")));
-                    ret[3] = Mathf.Max(ret[3], Convert.ToInt32(reader.GetAttribute("y")));
-                }
-                reader.ReadToNextSibling("object");
-                clist.Add(contour.ToArray());
-            }
-        }
-
-        myTerr.load(clist);
-        return ret;
-    }*/
-
     public int[] myParseOmap() {
         if (ptext == null) {
             return null;
         }
         int[] ret = new int[4];
 
-        ret[0] = Int32.MaxValue;
-        ret[1] = Int32.MinValue;
-        ret[2] = Int32.MaxValue;
-        ret[3] = Int32.MinValue;
+        ret[0] = Int32.MaxValue; // min x
+        ret[1] = Int32.MinValue; // max x
+        ret[2] = Int32.MaxValue; // min y
+        ret[3] = Int32.MinValue; // max y
 
         int ix = findFrom("default part",0); // Position, where in all omap files begin changes
 
@@ -163,89 +64,93 @@ public class Parser : MonoBehaviour {
         Debug.Log("znaky default part: " + ptext[ix] + ptext[ix-1] + ptext[ix-2] +
             ptext[ix-3] + ptext[ix-4] + ptext[ix-5] + ptext[ix-6]);
 
-        List<Vector3[]> clist = new List<Vector3[]>();
-        List<Vector3> contour = new List<Vector3>();
+        List<Vector3[]> clist = new List<Vector3[]>(); // array of contours
+        List<Vector3> contour = new List<Vector3>(); // temporary variable for contour
         int countObj = 0;
         int countCoords = 0;
         int symbol = -1;
         int x, y;
-        bool containsObject = true;
 
-        while (ix < ptext.Length && containsObject) {
+        while (ix < ptext.Length) {
             ix = findFrom("<objects ", ix); // index from "default part", gets index after "objects"
             if (ix == -1) break;
 
-            ix = findFrom("count=\"", ix); // index from "objects", gets index after "count=""
+            ix = findFrom("count=\"", ix); // index from "<objects ", gets index after "count=""
             countObj = readInt(ix); // reads integer from actual index
 
-            for (int i = 0; i < countObj; i++) {
+            for (int i = 0; i < countObj; i++) { // from previous parent objects parameter count we know number of object elements
                 ix = findFrom("<object ", ix);
                 if (ix == -1) break;
                 ix = findFrom("symbol=\"", ix);
                 symbol = readInt(ix);
 
                 ix = findFrom("<coords ", ix);
-                ix = findFrom("count=\"", ix); // index from "objects", gets index after "count=""
+                ix = findFrom("count=\"", ix); // index from "<coords ", gets index after "count=""
                 countCoords = readInt(ix);
                 contour.Clear();
 
-                for (int j = 0; j < countCoords; j++) {
+                for (int j = 0; j < countCoords; j++) { // from parent element parameter count we know number of coord elements
                     ix = findFrom("<coord ", ix);
                     if (ix == -1) break;
 
-                    ix = findFrom("x=\"", ix);
+                    ix = findFrom("x=\"", ix); // x value
                     x = readInt(ix);
 
-                    ix = findFrom("y=\"", ix);
+                    ix = findFrom("y=\"", ix); // y value
                     y = readInt(ix);
 
-                    ret[0] = Mathf.Min(ret[0], x);
-                    ret[2] = Mathf.Min(ret[2], y);
-                    ret[1] = Mathf.Max(ret[1], x);
-                    ret[3] = Mathf.Max(ret[3], y);
+                    ret[0] = Mathf.Min(ret[0], x); // min x
+                    ret[2] = Mathf.Min(ret[2], y); // min y
+                    ret[1] = Mathf.Max(ret[1], x); // max x
+                    ret[3] = Mathf.Max(ret[3], y); // max y
 
-                    contour.Add(new Vector3((float)x,(float)y,0));
+                    contour.Add(new Vector3((float)x,(float)y,0)); // add x and y values to contour
                 }
-                ix = findFrom("</coords>", ix);
-                ix = findFrom("</object>", ix);
+                ix = findFrom("</coords>", ix); // close element coords
+                ix = findFrom("</object>", ix); // close element object
 
-                clist.Add(contour.ToArray());
+                clist.Add(contour.ToArray()); // add contour from last object's coords to array of contours
             }
-            ix = findFrom("</objects>", ix);
+            ix = findFrom("</objects>", ix); // close element objects
         }
 
-        myTerr.load(clist);
+        myTerr.load(clist); // add array of contours to terrain object
         Debug.Log("min x: " + ret[0].ToString() +
             " max x: " + ret[1].ToString() +
             " min y: " + ret[2].ToString() +
             " max y: " + ret[3].ToString());
-        return ret;
+        return ret; // return mins a maxs of x and y
     }
 
     public int findFrom(string keyword, int fromIx) {
-        string test = "";
+        // Finds keyword from index in string ptext and returns index after last char in keyword from ptext.
+        bool test;
         for (int i = fromIx; i < ptext.Length - keyword.Length; i++) {
-            test = "";
-            for (int j = 0; j < keyword.Length; j++) {
-                test += ptext[i + j];
+            test = true;
+            for (int j = 0; j < keyword.Length; j++) { // compare actual position with keyword
+                if (ptext[i + j] != keyword[j]) { // if chars are not equal, then test is false
+                    test = false;
+                    break;
+                }
             }
-            if (keyword == test) {
+            if (test) { // if test is not false, then return index after keyword
                 return i + keyword.Length;
             }
         }
-        return -1;
+        return -1; // if keyword is not found, then return -1
     }
 
     public int readInt(int fromIx) {
-        string ints = "-0123456789";
-        string strInt = "";
+        // Reads integer from index in ptext string and returns it as int.
+        string ints = "-0123456789"; // Valid chars.
+        string strInt = ""; 
         int i = 0;
         
-        while (fromIx + i < ptext.Length && ints.IndexOf(ptext[fromIx + i]) != -1) {
+        while (fromIx + i < ptext.Length && ints.IndexOf(ptext[fromIx + i]) != -1) { // while char on index i is from valid chars do concatenation
             strInt += ptext[fromIx + i];
             i++;
         }
 
-        return Convert.ToInt32(strInt);
+        return Convert.ToInt32(strInt); // return int from concatenation of valid chars
     }
 }

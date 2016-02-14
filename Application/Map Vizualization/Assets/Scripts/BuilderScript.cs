@@ -151,8 +151,10 @@ public class BuilderScript : MonoBehaviour {
                 contourBuffer.Clear();
 
                 ret[y][x] += level;
-                ret[y][x] = Convert.ToInt32(
-                    Math.Ceiling(Convert.ToSingle(ret[y][x]) / 2.0f));
+                if (ret[y][x] != 0) {
+                    ret[y][x] = Convert.ToInt32(
+                        Math.Ceiling(Convert.ToSingle(ret[y][x]) / 2.0f));
+                }
             }
             seen.Clear();
         }
